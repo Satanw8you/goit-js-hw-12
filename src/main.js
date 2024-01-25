@@ -128,6 +128,7 @@ async function loadMoreImages() {
       });
       loadBtn.style.display = 'none';
       secSpan.style.display = 'none';
+      loadBtn.removeEventListener('click', loadMoreImages);
       return;
     }
     secSpan.style.display = 'none';
