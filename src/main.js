@@ -8,10 +8,10 @@ const form = document.querySelector('.form');
 const list = document.querySelector('.image-list');
 const span = document.querySelector('.loader');
 const loadBtn = document.querySelector('.load-button');
-const secSpan = document.querySelector('.sec-loader');
+const secondaryLoader = document.querySelector('.sec-loader');
 
 span.style.display = 'none';
-secSpan.style.display = 'none';
+secondaryLoader.style.display = 'none';
 loadBtn.style.display = 'none';
 form.addEventListener('submit', handleSearchOnForm);
 loadBtn.addEventListener('click', loadMoreImages);
@@ -37,6 +37,7 @@ function handleSearchOnForm(event) {
     span.style.display = 'none';
     return;
   }
+  queryParams.currentPage = 1;
   fetchImages(queryParams.inputValue, queryParams.currentPage)
     .then(({ data }) => {
       span.style.display = 'none';
@@ -89,13 +90,13 @@ async function fetchImages(name, page) {
       title: 'Error',
       message: 'Sorry! The site is currently unavailable. Please try later!',
     });
-    console.error(error.message);
+    console.error(error);
   }
 }
 
 async function loadMoreImages() {
   queryParams.currentPage += 1;
-  secSpan.style.display = 'block';
+  secondaryLoader.style.display = 'block';
   loadBtn.style.display = 'none';
   const getImgHeight = () =>
     document.querySelector('.image-list-item').getBoundingClientRect();
@@ -104,13 +105,13 @@ async function loadMoreImages() {
       queryParams.inputValue,
       queryParams.currentPage
     );
-    if (!data || data.totalHits === 0) {
+    if (data.totalHits === 0) {
       iziToast.warning({
         title: 'Caution',
         message: 'No matching images found.',
       });
       loadBtn.style.display = 'none';
-      secSpan.style.display = 'none';
+      secondaryLoader.style.display = 'none';
       return;
     }
     list.insertAdjacentHTML('beforeend', createMarkup(data.hits));
@@ -127,16 +128,17 @@ async function loadMoreImages() {
         message: `We're sorry, but you've reached the end of search results.`,
       });
       loadBtn.style.display = 'none';
-      secSpan.style.display = 'none';
+      secondaryLoader.style.display = 'none';
       loadBtn.removeEventListener('click', loadMoreImages);
       return;
     }
-    secSpan.style.display = 'none';
+    secondaryLoader.style.display = 'none';
     loadBtn.style.display = 'block';
   } catch (error) {
     console.log(error);
   }
 }
+
 function createMarkup(array) {
   return array
     .map(
@@ -154,21 +156,21 @@ function createMarkup(array) {
           </a>
           <div class="image-wrapper">
             <ul class="desc-list">
-              <li class="desk-item">
-                <h2 class="desk-title">Likes</h2>
-                <p class="desk-text">${likes}</p>
+              <li class="desc-item">
+                <h2 class="desc-title">Likes</h2>
+                <p class="desc-text">${likes}</p>
               </li>
-              <li class="desk-item">
-                <h2 class="desk-title">Views</h2>
-                <p class="desk-text">${views}</p>
+              <li class="desc-item">
+                <h2 class="desc-title">Views</h2>
+                <p class="desc-text">${views}</p>
               </li>
-              <li class="desk-item">
-                <h2 class="desk-title">Comments</h2>
-                <p class="desk-text">${comments}</p>
+              <li class="desc-item">
+                <h2 class="desc-title">Comments</h2>
+                <p class="desc-text">${comments}</p>
               </li>
-              <li class="desk-item">
-                <h2 class="desk-title">Downloads</h2>
-                <p class="desk-text">${downloads}</p>
+              <li class="desc-item">
+                <h2 class="desc-title">Downloads</h2>
+                <p class="desc-text">${downloads}</p>
               </li>
             </ul>
           </div>
